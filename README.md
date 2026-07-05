@@ -10,13 +10,15 @@ VibeCash is a high-performance, AI-driven personal financial expense extraction 
 
 ## 1. Project Overview
 
-Manual expense tracking is tedious and prone to friction. VibeCash solves this by allowing users to log transaction details in natural conversation format (e.g., *"Got coffee for 25000 VND"* or *"Paid $15 for dinner yesterday"*). The intelligent agent extracts:
-* **Item / Category** (e.g., Coffee, Dinner)
-* **Value / Amount** (e.g., 25000, 15)
-* **Currency** (e.g., VND, USD)
+Manual expense tracking is tedious and prone to friction. VibeCash solves this by allowing users to log transaction details in natural conversation format (e.g., *"Got 2 coffees for 40000 VND"* or *"Paid $15 for dinner yesterday"*). The intelligent agent extracts:
+* **Item / Description** (e.g., Coffee, Dinner)
+* **Value / Amount** (e.g., 40000, 15)
+* **Currency** (e.g., VND, USD - mapped to standard 3-letter ISO codes)
 * **Precise Local Timestamp** (e.g., `2026-07-05T13:50:09+07:00`)
+* **Quantity** (e.g., 2, 1)
+* **Category** (e.g., Food & Beverage, Travel)
 
-By deploying modular agent skills, VibeCash accurately maps transactions, validates credential security, and stores them structured under an local CSV file.
+By deploying modular agent skills, VibeCash accurately maps transactions, validates credential security, and stores them structured under a local CSV file.
 
 ---
 
@@ -24,7 +26,9 @@ By deploying modular agent skills, VibeCash accurately maps transactions, valida
 
 * **Natural Language Processing**: Contextual understanding of informal, multilingual financial descriptions powered by `gemini-3.5-flash`.
 * **ADK Skill Execution**: Dynamically executes custom Python tools for fetching host timezone offsets and saving data safely.
-* **Streamlit & CLI Front-Ends**: Interactive web dashboard utilizing a modern aesthetic, coupled with a robust command-line interface.
+* **Real-Time Metric Dashboard**: Fully real-time Streamlit dashboard that dynamically calculates and displays *Today's Expenses* and *Total Transactions* directly from the CSV storage.
+* **Interactive Excel-like Output**: Renders final extracted transaction details beautifully using clean, index-free Pandas DataFrames (`st.dataframe`) rather than static markdown tables.
+* **Rate-Limit Resilience**: Gracefully catches rate-limit exceptions (429/Resource Exhausted) and displays user-friendly warning states.
 * **No Hardcoded Credentials**: Built-in security architecture that strictly loads credentials dynamically and manages active sessions.
 
 ---
@@ -44,8 +48,8 @@ VibeCash features a deterministic, state-driven workflow routing user queries di
 3. **Gemini ADK Agent**: Acting as the central controller, the agent parses instructions, evaluates safety rules, and initiates tool calls.
 4. **Time Skill & CSV Storage**:
    * The Agent calls the local **Time Server Skill** (`get_current_time`) to get a localized ISO 8601 timestamp.
-   * The Agent aggregates the payload and triggers the **CSV Save Skill** (`save_expense`), writing details to `expenses.csv`.
-5. **UI Output**: The Agent returns a structured transaction summary (Markdown Table/JSON) displayed to the user via the Streamlit interface.
+   * The Agent aggregates the payload and triggers the **CSV Save Skill** (`save_expense`), writing details (Timestamp, Item, Amount, Currency, Quantity, and Category) to `expenses.csv`.
+5. **UI Output**: The Agent returns a structured JSON transaction summary, which the Streamlit interface dynamically parses and displays as a clean, interactive Pandas DataFrame.
 
 ![Sequence Diagram](sequence-diagram.png)
 

@@ -49,14 +49,16 @@ def get_current_time() -> str:
     return datetime.now(local_tz).isoformat()
 
 
-def save_expense(item: str, amount: float, currency: str, timestamp: str) -> str:
+def save_expense(item: str, amount: float, currency: str, timestamp: str, quantity: int = 1, category: str = "Uncategorized") -> str:
     """Save an extracted expense to the local expenses.csv file.
     
     Args:
-        item: The description or category of the item purchased (e.g., coffee, lunch).
+        item: The description of the item purchased (e.g., coffee, lunch).
         amount: The monetary value of the expense (numeric).
-        currency: The currency symbol or code (e.g. USD, EUR, VND, etc.).
+        currency: The currency code (e.g. USD, IDR).
         timestamp: The timezone-aware timestamp when the expense occurred.
+        quantity: The quantity of items purchased.
+        category: The specific category of the expense (e.g. Food & Beverage).
         
     Returns:
         str: A confirmation message indicating the expense was logged successfully.
@@ -66,9 +68,9 @@ def save_expense(item: str, amount: float, currency: str, timestamp: str) -> str
     with open("expenses.csv", "a", newline="", encoding="utf-8") as f:
         writer = csv.writer(f)
         if not file_exists:
-            writer.writerow(["Timestamp", "Item/Category", "Amount", "Currency"])
-        writer.writerow([timestamp, item, amount, currency])
-    return f"Successfully logged to CSV: {item} - {amount} {currency} at {timestamp}"
+            writer.writerow(["Timestamp", "Item/Category", "Amount", "Currency", "Quantity", "Category"])
+        writer.writerow([timestamp, item, amount, currency, quantity, category])
+    return f"Successfully logged to CSV: {item} (x{quantity}) - {amount} {currency} under Category: {category} at {timestamp}"
 
 
 # =====================================================================
@@ -105,6 +107,8 @@ async def main():
             "You are VibeCash, a helpful financial expense extraction assistant. "
             "Your goal is to parse user descriptions of daily expenses (e.g., 'I bought coffee for 20000') "
             "and extract the expense details (item/category, amount, currency, timestamp). "
+            "The currency field MUST strictly return the standard 3-letter ISO currency code (e.g., 'USD', 'IDR', 'VND') "
+            "instead of just a symbol. "
             "To timestamp the expenses accurately, you MUST use the 'get_current_time' tool "
             "to retrieve the current local date and time. "
             "Once you have extracted the details, you MUST invoke the 'save_expense' tool to "
