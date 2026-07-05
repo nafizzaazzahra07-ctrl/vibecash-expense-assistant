@@ -129,6 +129,14 @@ GEMINI_API_KEY=your_actual_gemini_api_key_here
 ```
 *(Note: Do not commit the `.env` file to your source repository.)*
 
+### Data Format (expenses.csv)
+The application automatically logs data into `expenses.csv` using the following structure:
+
+| timestamp | item | category | amount | currency |
+| :--- | :--- | :--- | :--- | :--- |
+| 2026-07-05T13:50:09+07:00 | Coffee | Food | 25000 | VND |
+| 2026-07-05T14:10:00+07:00 | Dinner | Food | 15 | USD |
+
 ### Step 4: Run the Application
 You can interact with VibeCash via two interface options:
 
