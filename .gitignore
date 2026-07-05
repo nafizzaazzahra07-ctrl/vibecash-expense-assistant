@@ -1,0 +1,8 @@
+# Folder & file rahasia
+venv/
+.env
+__pycache__/
+
+# File sistem
+.DS_Store
+*.csv
